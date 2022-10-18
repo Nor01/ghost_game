@@ -37,23 +37,12 @@ starting_order = {(0, 0): None, (1, 0): pygame.image.load(bp.image),
                   (4, 5): pygame.image.load(wp.image), (5, 5): None,}
 
 def create_board(board):
-    board[0] = [Piece('b', 'R', 'b_rook.png'), Piece('b', 'N', 'b_knight.png'), Piece('b', 'B', 'b_bishop.png'), \
-                Piece('b', 'Q', 'b_queen.png'), Piece('b', 'K', 'b_king.png'), Piece('b', 'B', 'b_bishop.png'), \
-                Piece('b', 'N', 'b_knight.png'), Piece('b', 'R', 'b_rook.png')]
-
-    board[7] = [Piece('w', 'R', 'w_rook.png'), Piece('w', 'N', 'w_knight.png'), Piece('w', 'B', 'w_bishop.png'), \
-                Piece('w', 'Q', 'w_queen.png'), Piece('w', 'K', 'w_king.png'), Piece('w', 'B', 'w_bishop.png'), \
-                Piece('w', 'N', 'w_knight.png'), Piece('w', 'R', 'w_rook.png')]
-
-    for i in range(8):
-        board[1][i] = Piece('b','p','b_pawn.png')
-        board[6][i] = Piece('w','p','w_pawn.png')
         
     return board
 
 ## returns the input if the input is within the boundaries of the board
 def on_board(position):
-    if position[0] > -1 and position[1] > -1 and position[0] < 8 and position[1] < 8:
+    if position[0] > -1 and position[1] > -1 and position[0] < 6 and position[1] < 6:
         return True
 
 ## returns a string that places the rows and columns of the board in a readable manner
