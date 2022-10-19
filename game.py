@@ -37,7 +37,8 @@ starting_order = {(0, 0): None, (1, 0): pygame.image.load(bp.image),
                   (4, 5): pygame.image.load(wp.image), (5, 5): None,}
 
 def create_board(board):
-        
+
+
     return board
 
 ## returns the input if the input is within the boundaries of the board
@@ -94,6 +95,24 @@ def check_team(moves, index):
     else:
         if board[row][col].team == 'b':
             return True
+
+## This takes in a piece object and its index then runs then checks where that piece can move using separately defined functions for each type of ghost maybe.
+def select_moves(piece, index, move):
+    if check_team(move, index):
+        if piece.type == 'p':
+            return highlight(ghost_moves(index))
+
+def ghost_moves(index):
+    for y in range(3):
+        for x in range(3):
+            if on_board((index[0] -1 + y, index[1] - 1 + x)):
+                if board[index[0] - 1 + y][index[1] - 1 + x] == '  ':
+                    board[index[0] - 1 + y][index[1] - 1 + x] = 'x '
+                else:
+                    if board[index[0] - 1 + y][index[1] - 1 + x].team != board[index[0]][index[1]].team:
+                        board[index[0] - 1 + y][index[1] - 1 + x].killable = True
+    
+    return board
 
 WIDTH = 600
 WINDOW = pygame.display.set_mode((WIDTH, WIDTH))
@@ -225,7 +244,51 @@ def main(WINDOW, WIDTH):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
                 y, x = Find_Node(pos, WIDTH)
-                
+                if selected == False:
+                    try:
+                        possible = select_moves((board[x][y]), (x,y), moves)
+                        for positions in possible:
+                            row, col = positions
+                            grid[row][col].colour = BLUE
+                        piece_to_move = x,y
+                        selected = True
+                    except:
+                        piece_to_move = []
+                        print('Can\'t select')
+                    #print(piece_to_move)
+                else:
+                    try:
+                        if board[x][y].killable == True:
+                            row, col = piece_to_move ## coords of original piece
+                            board[x][y] = board[row][col]
+                            board[row][col] = '  '
+                            deselect()
+                            remove_highlight(grid)
+                            Do_Move((col, row), (y, x), WINDOW)
+                            moves += 1
+                            print(convert_to_readable(board))
+                        else:
+                            deselect()
+                            remove_highlight(grid)
+                            selected = False
+                            print("Deselected")
+                    except:
+                        if board[x][y] == 'x ':
+                            row, col = piece_to_move
+                            board[x][y] = board[row][col]
+                            board[row][col] = '  '
+                            deselect()
+                            remove_highlight(grid)
+                            Do_Move((col, row), (y, x), WIN)
+                            moves += 1
+                            print(convert_to_readable(board))
+                        else:
+                            deselect()
+                            remove_highlight(grid)
+                            selected = False
+                            print("Invalid move")
+
+                    selected = False   
 
             update_display(WINDOW, grid, 6, WIDTH)
 
