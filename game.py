@@ -97,10 +97,54 @@ def check_team(moves, index):
             return True
 
 ## This takes in a piece object and its index then runs then checks where that piece can move using separately defined functions for each type of ghost maybe.
-def select_moves(piece, index, move):
-    if check_team(move, index):
+def select_moves(piece, index, moves):
+    if check_team(moves, index):
         if piece.type == 'p':
-            return highlight(ghost_moves(index))
+            if piece.team == 'b':
+                return highlight(pawn_moves_b(index))
+            else:
+                return highlight(pawn_moves_w(index))
+
+def pawn_moves_b(index):
+    if index[0] == 1:
+        if board[index[0] + 1][index[1]] == '  ' and board[index[0] + 1][index[1]] == '  ':
+            board[index[0] + 1][index[1]] = 'x '
+
+    bottom3 = [[index[0] + 1, index[1] + i] for i in range(-1,2)]
+
+    for positions in bottom3:
+        if on_board(positions):
+            if bottom3.index(positions) % 2 == 0:
+                try:
+                    if board[positions[0]][positions[1]].team != 'b':
+                        board[positions[0]][positions[1]].killable = True
+                except:
+                    pass
+            else:
+                if board[positions[0]][positions[1]] == '  ':
+                    board[positions[0]][positions[1]] = 'x '
+    return board
+
+def pawn_moves_w(index):
+    if index[0] == 4:
+        if board[index[0] - 1][index[1]] == '  ' and board[index[0] - 1][index[1]] == '  ':
+            board[index[0] - 1][index[1]] = 'x '
+
+    top3 = [[index[0] - 1, index[1] + i] for i in range(-1,2)]
+
+    for positions in top3:
+        if on_board(positions):
+            if top3.index(positions) % 2 == 0:
+                try:
+                    if board[positions[0]][positions[1]].team != 'w':
+                        board[positions[0]][positions[1]].killable = True
+                except:
+                    pass
+            else:
+                if board[positions[0]][positions[1]] == '  ':
+                    board[positions[0]][positions[1]]= 'x '
+
+    return board
 
 def ghost_moves(index):
     for y in range(3):
@@ -254,7 +298,7 @@ def main(WINDOW, WIDTH):
                         selected = True
                     except:
                         piece_to_move = []
-                        print('Can\'t select')
+                        print('Cant select')
                     #print(piece_to_move)
                 else:
                     try:
@@ -266,7 +310,7 @@ def main(WINDOW, WIDTH):
                             remove_highlight(grid)
                             Do_Move((col, row), (y, x), WINDOW)
                             moves += 1
-                            print(convert_to_readable(board))
+                            print(convert_to_readeable(board))
                         else:
                             deselect()
                             remove_highlight(grid)
@@ -279,9 +323,9 @@ def main(WINDOW, WIDTH):
                             board[row][col] = '  '
                             deselect()
                             remove_highlight(grid)
-                            Do_Move((col, row), (y, x), WIN)
+                            Do_Move((col, row), (y, x), WINDOW)
                             moves += 1
-                            print(convert_to_readable(board))
+                            print(convert_to_readeable(board))
                         else:
                             deselect()
                             remove_highlight(grid)
